@@ -1,0 +1,90 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@model IEnumerable<Car>
+@{
+    ViewData["Title"] = "إدارة السيارات";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">قائمة السيارات</h3>
+                <div class="card-tools">
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> إضافة سيارة جديدة
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>الاسم</th>
+                            <th>الموديل</th>
+                            <th>نوع الوقود</th>
+                            <th>السعر</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var car in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(car.ImagePath))
+                                    {
+                                        <img src="@car.ImagePath" alt="@car.Name"
+                                             style="width: 50px; height: 50px; object-fit: cover;"
+                                             class="img-thumbnail">
+                                    }
+                                </td>
+                                <td>@car.Name</td>
+                                <td>@car.Model</td>
+                                <td>@car.FuelType</td>
+                                <td>@car.Price.ToString("C")</td>
+                                <td>
+                                    @switch (car.Status)
+                                    {
+                                        case CarStatus.Available:
+                                            <span class="badge badge-success">متاحة</span>
+                                            break;
+                                        case CarStatus.Booked:
+                                            <span class="badge badge-warning">محجوزة</span>
+                                            break;
+                                        case CarStatus.OutOfService:
+                                            <span class="badge badge-danger">معطلة</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Edit" asp-route-id="@car.Id"
+                                           class="btn btn-sm btn-info">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@car.Id"
+                                           class="btn btn-sm btn-secondary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-controller="Booking" asp-action="Create"
+                                           asp-route-carId="@car.Id"
+                                           class="btn btn-sm btn-primary"
+                                           style="@(car.Status == CarStatus.Available ? "" : "display:none;")">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
